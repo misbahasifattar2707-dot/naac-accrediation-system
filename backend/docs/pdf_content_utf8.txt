@@ -1,0 +1,388 @@
+Criteria 1.1                                                                                        
+When program name MCA is selected at first on register and 
+login page then everywhere automatically MCA should be 
+come then in program name and on the top of the website on 
+right side corner who has login like admin.super admin ,staff 
+who has logged in should be visible then which department 
+then if program code is MCA then everywhere where program 
+code is written there this code should come 515124110 then in 
+criteria 1.1 there is program name so there should be 
+FYMCA -SEM -1 (MCA) likewise should come for the 
+program name in criteria 1.1 which should be added in the 
+semester lookup table in that these values should be come  1) 
+FYMCA -SEM -I
+(MCA)
+2)
+FYMCA SEM -II(MCA)  3)SYMCA SEM -III(MCA) 4)
+SYMCA SEM -IV(MCA) then in course name lookup tables 
+these values should be added 
+Course code+C2:D31 Course Name
+310901 Discrete Mathematics and Statistics
+310902 Data Structures and Algorithms
+310903 Object Oriented Programming
+310904 Software Engineering & Project Management
+310905 Information Systems and Engineering Economics
+310906 Data Structures and Algorithms Laboratory
+310907 Object Oriented Programming Laboratory
+310908 Python Programming Laboratory
+310909 Business Communication Lab
+310910 Audit Course
+310911 Non Credit Course -1: MOOC Course -I-
+Swayam/Spoken Tutorial /NPTEL
+310912 Database Management System
+310913 Computer Network
+310914 Java Programming
+310915 Operating System
+310916 Elective -I
+310917 Database Management System Laboratory
+310918 Operating System Lab
+310919 Java Programming Laboratory
+310920 Project Based Learning -I
+310921 : Audit Course -2
+310922 Non Credit Course -2: MOOC Course -II-
+Swayam/Spoken Tutorial /NPTEL
+410901 Data Science
+410902 Web Technologies
+410903 Cloud Computing
+410904 Elective: II
+410905 Software Testing and Quality Assurance
+410906 Web Technologies Lab
+410907 Computer Laboratory
+410908 Data Science Laboratory
+410909 Project Based Learning –II
+410910 AC 3 -I
+410911 NCC3: MOOC Course -III-Swayam/Spoken 
+Tutorial /NPTEL
+410912 Major Project
+410913 Seminar on Major Project
+410914 Audit Course 4                          and then by refering 
+below like below again the above thing is given semester wise 
+course code and course name soo when semester is selected 
+those values fetched frm the course lookup table                                                                        
+Program Name                                                                               
+Course code Course Name
+FYMCA -SEM -I
+(MCA)                                                                                     
+310901 Discrete Mathematics and Statistics
+310902 Data Structures and Algorithms
+310903 Object Oriented Programming
+310904 Software Engineering & Project Management
+310905 Information Systems and Engineering 
+EconomicsCriteria imp things 
+Thursday, April 23, 2026 10:17 PM
+   New Section 1 Page 1    
+Economics
+310906 Data Structures and Algorithms Laboratory
+310907 Object Oriented Programming Laboratory
+310908 Python Programming Laboratory
+310909 Business Communication Lab
+310910 Audit Course
+310911 Non Credit Course -1: MOOC Course -I-
+Swayam/Spoken Tutorial /NPTEL
+FYMCA SEM -II                                                                   
+310912 Database Management System
+310913 Computer Network
+310914 Java Programming
+310915 Operating System
+310916 Elective -I
+310917 Database Management System Laboratory
+310918 Operating System Lab
+310919 Java Programming Laboratory
+310920 Project Based Learning -I
+310921 : Audit Course -2
+310922 Non Credit Course -2: MOOC Course -II-
+Swayam/Spoken Tutorial /NPTEL
+SYMCA SEM -III                                                                          
+410901 Data Science
+410902 Web Technologies
+410903 Cloud Computing
+410904 Elective: II
+410905 Software Testing and Quality Assurance
+410906 Web Technologies Lab
+410907 Computer Laboratory
+410908 Data Science Laboratory
+410909 Project Based Learning –II
+410910 AC 3 -I
+410911 NCC3: MOOC Course -III-Swayam/Spoken 
+Tutorial /NPTEL
+SYMCA SEM -IV                                                                                   
+410912 Major Project
+410913 Seminar on Major Project
+410914 Audit Course 4                                                            
+like this also when we will select in dropdown the course 
+name soo by selecting course name the code should be 
+selected and then both should come in differrent column 
+then in criteria 1.1 in year of introduction there should be 
+a dropdown from 2019 to 2026 should be visible then 
+the UI should match this sheet like column names and the 
+data that stored in different values likewise              
+There should be a proof field should be there then it 
+should be stored in the evidance table criteria wise then 
+there should be add more proof field then there should be 
+export to excel and combine pdf and download it option 
+should be there and that combined proof link should be 
+added in the excel sheet and in the particular criteria table
+Criteria 1.1.3
+In this criteria the field should have dropdown from 
+2022 -23 to 2026 -27 then in name of teacher there should 
+be values fetched from the database lookup table of 
+teachers these names should be come 1)Mehraj I Khan   2)
+P.D.Jadhav 3)M.V.Khond 4)Javed R. Attar 5)Sonali L. 
+Vidhate 6)Pritee Fuldeore 7)Dr. Nita Shinde 
+Then name of the body should be a text field 
+  the UI should match this sheet like column names and 
+the data that stored in different values likewise     
+There should be a proof field should be there then it 
+should be stored in the evidance table criteria wise then 
+   New Section 1 Page 2    
+should be stored in the evidance table criteria wise then 
+there should be add more proof field then there should be 
+export to excel and combine pdf and download it option 
+should be there and that combined proof link should be 
+added in the excel sheet and in the particular criteria table
+Criteria 1.2.1
+In this criteria program code and program name should 
+reflect likewise as I said earlier then in year of 
+introduction again there should be a dropdown from 2019 
+to 2026 should be visible then in status of implementation 
+the yes or no in the dropdown then in year of 
+implementation there should be dropdown from 2019 to 
+2026 should be visible then 
+There should be a proof field should be there then it 
+should be stored in the evidance table criteria wise then 
+there should be add more proof field then there should be 
+export to excel and combine pdf and download it option 
+should be there and that combined proof link should be 
+added in the excel sheet and in the particular criteria table 
+            
+the UI should match this sheet like column names and the 
+data that stored in different values likewise  
+There should be a proof field should be there then it 
+should be stored in the evidance table criteria wise then 
+there should be add more proof field then there should be 
+export to excel and combine pdf and download it option 
+should be there and that combined proof link should be 
+added in the excel sheet and in the particular criteria table
+Criteria 1.2.2 & 1.2.3  
+Name of Add on /Certificate programs offered,Course 
+Code (if any) ,No. of times offered during the same 
+year,Number of students enrolled in the year,Number of 
+Students completing the course  in the year                            
+all should be  input fields then      Year of offering    there 
+should be a dropdown from 2022 -23 to 2026 -27                                                  
+Duration of course there should be dropdown from 1 
+month to 12 months 
+the UI should match this sheet like column names and the 
+data that stored in different values likewise  
+There should be a proof field should be there then it 
+should be stored in the evidance table criteria wise then 
+   New Section 1 Page 3    
+should be stored in the evidance table criteria wise then 
+there should be add more proof field then there should be 
+export to excel and combine pdf and download it option 
+should be there and that combined proof link should be 
+added in the excel sheet and in the particular criteria table
+CRITERIA 1.3.2
+In this criteria program name and program code should 
+reflect automatically then for this Name of the Course that 
+include experiential learning through project work/field 
+work/internship there should be dropdown of PBL -1 and 
+Major Project then  in criteria 1.3.2 when fymca is 
+selected then all pbl -1 students should be come in the 
+whole students coumn then there course code first we 
+have to store the students according to the course code in 
+the students lookup table then when major project is 
+selected and symca in the program code of criteria 1.3.2 
+then the students names and course code already fetch 
+from the students lookup table and it should be reflected in 
+that particular column and then in the year of offering 
+there should be there should be a dropdown from 2022 -23 
+to 2026 -27 then   
+There should be a proof field should be there then it 
+should be stored in the evidance table criteria wise then 
+there should be add more proof field then there should be 
+export to excel and combine pdf and download it option 
+should be there and that combined proof link should be 
+added in the excel sheet and in the particular criteria table
+Name of the Course that include experiential learning 
+through project work/field work/internship Course code
+Year of offering Name of the student studied 
+course on experiential learning through project work/field 
+work/internship
+PBL-1310920 2024 -25arya pednekar
+PBL-1310921 2024 -25roshan pawar
+PBL-1310922 2024 -25om zend
+PBL-1310923 2024 -25amruta sonawane
+PBL-1310924 2024 -25Kajal Sable
+PBL-1310925 2024 -25Yukta savdekar
+PBL-1310926 2024 -25Nikita prajapati
+PBL-1310927 2024 -25Jadhav Rutuja
+PBL-1310928 2024 -25Deshmukh Charushila
+PBL-1310929 2024 -25Bhagwat Vaishnavi
+PBL-1310930 2024 -25Jadhav Durgesh
+PBL-1310931 2024 -25kaustubh aware
+PBL-1310932 2024 -25Aditya dive
+PBL-1310933 2024 -25Aditya gore
+PBL-1310934 2024 -25harshal gosavi
+PBL-1310935 2024 -25Sachin dhangar
+PBL-1310936 2024 -25Tanvi Barve
+PBL-1310937 2024 -25Sarthak Bhujbal
+PBL-1310938 2024 -25abhijeet bankar
+PBL-1310939 2024 -25Ayyan Pathan
+PBL-1310940 2024 -25Abhishek Lute
+PBL-1310941 2024 -25Pradip Patil
+PBL-1310942 2024 -25Shree Joshi
+PBL-1310943 2024 -25Yashika chawla
+PBL-1310944 2024 -25Akshaya Achariya
+PBL-1310945 2024 -25Pooja Dhikale
+PBL-1310946 2024 -25Priti chaudhary
+PBL-1310947 2024 -25Rida Fatema Shaikh
+PBL-1310948 2024 -25Uzma Shaikh
+PBL-1310949 2024 -25Pallavi Thete
+PBL-1310950 2024 -25Nitesh Singh
+PBL-1310951 2024 -25Yogita Uphade
+PBL-1310952 2024 -25Aachal Vaishnav
+PBL-1310953 2024 -25Snehal Ranshingh
+PBL-1310954 2024 -25Janhvi Shirsath
+PBL-1310955 2024 -25Kalyani Shinde
+PBL-1310956 2024 -25Janhvi Shinde
+PBL-1310957 2024 -25Mangesh Khapare
+PBL-1310958 2024 -25Aniruddha Kedar
+PBL-1310959 2024 -25Sakshi Mathure
+PBL-1310960 2024 -25Sanjana Patil
+   New Section 1 Page 4    
+PBL-1310960 2024 -25Sanjana Patil
+PBL-1310961 2024 -25Mayuri Mahajan
+PBL-1310962 2024 -25Nutan Khandave
+PBL-1310963 2024 -25Jayshree Patil
+PBL-1310964 2024 -25Aditi Kawale
+PBL-1310965 2024 -25sanjana Bonde
+PBL-1310966 2024 -25Pallavi Borade
+PBL-1310967 2024 -25kunal Ingle
+PBL-1310968 2024 -25Rishabh Shinde
+PBL-1310969 2024 -25Dipesh Wagh
+PBL-1310970 2024 -25Jayashri Thakare
+PBL-1310971 2024 -25Akanksha Rade
+PBL-1310972 2024 -25Harshad Dhongade
+PBL-1310973 2024 -25Rahul Howale
+PBL-1310974 2024 -25Vaishnavi Aher
+PBL-1310975 2024 -25Misbah Attar
+PBL-1310976 2024 -25Rohan Pagar
+PBL-1310977 2024 -25Harsh Pawar
+PBL-1310978 2024 -25Ketakee Patil
+PBL-1310979 2024 -25Tanaya Patil
+PBL-1310980 2024 -25Abhay Pansare
+PBL-1310981 2024 -25Shraddha Kale
+PBL-1310982 2024 -25Ankita Mali
+PBL-1310983 2024 -25Neha Mutha
+PBL-1310984 2024 -25Ganesh kanojiya
+PBL-1310985 2024 -25Yash kamwal
+PBL-1310986 2024 -25Mukesh Kamble
+PBL-1310987 2024 -25Shubham Shewale
+PBL-1310988 2024 -25Rushikesh Pawar
+Major Project 410912 2024 -25Bhalerao Tejal Satish
+Major Project 410912 2024 -25Bhamare Krutika 
+Chandrakant
+Major Project 410912 2024 -25Bhamare Nikhil Deelip
+Major Project 410912 2024 -25Bharambe Sayali 
+Yuvraj
+Major Project 410912 2024 -25Borse Chandani Lotan
+Major Project 410912 2024 -25Chavan Akshay Gokul
+Major Project 410912 2024 -25Daware Madhura 
+Shamrao
+Major Project 410912 2024 -25Deore Sakshi Sanjay
+Major Project 410912 2024 -25Desale Dhanashree 
+Satish
+Major Project 410912 2024 -25Desale Vrushali 
+Yogesh
+Major Project 410912 2024 -25Deshmukh Satyajit 
+Sharadrao
+Major Project 410912 2024 -25Deshmukh Shivani 
+Vijay
+Major Project 410912 2024 -25Dingar Shruti Sunil
+Major Project 410912 2024 -25Gaikwad Suraj Kailas
+Major Project 410912 2024 -25Gaykhe Tejas Vinayak
+Major Project 410912 2024 -25Ghodekar Kajal 
+Tukaram
+Major Project 410912 2024 -25Gondhale Nisha Nitin
+Major Project 410912 2024 -25Gosavi Dinesh Motigir
+Major Project 410912 2024 -25Hanphode Sanket 
+Arvind
+Major Project 410912 2024 -25Hire Komal Narayan
+Major Project 410912 2024 -25Jadhav Amrapali Sunil
+Major Project 410912 2024 -25Jha Nandini Avinash
+Major Project 410912 2024 -25Joshi Dhara Sanjay
+Major Project 410912 2024 -25Juneja Khushi Sanjiv
+Major Project 410912 2024 -25Kalkar Renuka Nitin
+Major Project 410912 2024 -25Kapade Gaurav Rajesh
+Major Project 410912 2024 -25Kapade Rudan Manoj
+Major Project 410912 2024 -25Kedar Ajay Pravin
+Major Project 410912 2024 -25Kothavade Shreyas 
+Prashant
+Major Project 410912 2024 -25Kshatriya Shivam Nitin
+Major Project 410912 2024 -25Kudale Sakshi Vikas
+Major Project 410912 2024 -25Lingayat Shivani 
+Sanjay
+Major Project 410912 2024 -25Lonari Gayatri Vijay
+Major Project 410912 2024 -25Mali Sahil Shashikant
+Major Project 410912 2024 -25Mandlik Sayali 
+   New Section 1 Page 5    
+Major Project 410912 2024 -25Mandlik Sayali 
+Nandkumar
+Major Project 410912 2024 -25Muthal Pratik Ramesh
+Major Project 410912 2024 -25Nikam Pratik Sharad
+Major Project 410912 2024 -25Nirbhavane Divya 
+Ravindra
+Major Project 410912 2024 -25Parakhe Tejas 
+Abhiman
+Major Project 410912 2024 -25Patil Sonali Manoj
+Major Project 410912 2024 -25Patole Tejas 
+Chandrakant
+Major Project 410912 2024 -25Patra Malavika 
+Chittaranjan
+Major Project 410912 2024 -25Pawar Pratiksha Dilip
+Major Project 410912 2024 -25Pisolkar Pooja 
+Rajendra
+Major Project 410912 2024 -25Potdar Sanchit 
+Mahendra
+Major Project 410912 2024 -25Sabale Gaurav Jalindar
+Major Project 410912 2024 -25Shaikh Mohd Saqib 
+Mohd Rafique
+Major Project 410912 2024 -25Suryawanshi Shubham 
+Subhash
+Major Project 410912 2024 -25Tajanpure Pritee 
+Ganesh
+Major Project 410912 2024 -25Thakkar Dhruvi 
+Niketan
+Major Project 410912 2024 -25Tiwari Deepak Arvind
+Major Project 410912 2024 -25Ugale Shubham 
+Madhukar
+Major Project 410912 2024 -25Wagh Dipali Kishor
+Major Project 410912 2024 -25Waghmare Tanisha 
+Milind
+Major Project 410912 2024 -25Waychale Nandini 
+Sunil
+In students table I want a thing like when I will first time 
+add students in the database there should be upload 
+student list with there course code option should be there 
+then I will upload both fymca and symca list and then it 
+will reflect everywhere the students is required 
+the UI should match this sheet like column names and the 
+data that stored in different values likewise
+Criteria 1.3.3
+In this criteria program name and program code should 
+reflect automatically then again list of students there 
+should be choice to select which students I want should 
+reflect symca or fymca but this selection should be for 
+only reflecting studnets in the stundets column this 
+selection should not come in the criteria 1.3.3 table or 
+excel sheet 
+There should be a proof field should be there then it 
+should be stored in the evidance table criteria wise then 
+there should be add more proof field then there should be 
+export to excel and combine pdf and download it option 
+should be there and that combined proof link should be 
+added in the excel sheet and in the particular criteria table
+the UI should match this sheet like column names and the 
+data that stored in different values likewise  
+   New Section 1 Page 6    

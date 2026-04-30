@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAAC Portal - Organized ER Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        #diagram-container {
+            width: 100%;
+            min-height: 2000px;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+        }
+        .mermaid {
+            width: 100%;
+        }
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        button {
+            padding: 12px 20px;
+            cursor: pointer;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button:hover {
+            background-color: #357abd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        button.secondary {
+            background-color: #2ecc71;
+        }
+        button.secondary:hover {
+            background-color: #27ae60;
+        }
+        .info-box {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+        @media print {
+            .controls { display: none; }
+            #diagram-container { box-shadow: none; padding: 0; overflow: visible; }
+            body { padding: 0; background: white; }
+            @page { size: A3 landscape; margin: 10mm; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>NAAC Portal Database Architecture</h1>
+        <div class="info-box">
+            <p>Organized by clusters: Core Master Data, Criteria 1-6 Modules, and Support Lookups.</p>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="window.print()">Print / Save A3 PDF</button>
+        <button class="secondary" onclick="downloadImage()">Download High-Res PNG</button>
+    </div>
+
+    <div id="diagram-container">
+        <pre class="mermaid" id="my-mermaid">
+erDiagram
+    users {
+        int id PK
+        string username
+        string password
+        string role
+        string department
+        string user_identifier
+        string year
+        datetime created_at
+        datetime updated_at
+        int created_by_id FK
+        int updated_by_id FK
+    }
+
+    program_lookup {
+        int id PK
+        string program_code
+        string program_name
+        string department
+        int year_of_introduction
+        datetime created_at
+        datetime updated_at
+        int created_by_id FK
+        int updated_by_id FK
+    }
+
+    course_lookup {
+        int id PK
+        string course_code
+        string course_name
+        int year_of_introduction
+        int program_id FK
+        datetime created_at
+        datetime updated_at
+        int created_by_id FK
+        int updated_by_id FK
+    }
+
+    teacher_lookup {
+        int id PK
+        string name
+        string pan
+        string aadhar_or_id
+        string email
+        string gender
+        string designation
+        string department
+        date joining_date
+        date leaving_date
+        string highest_degree
+        int degree_year
+        boolean is_still_serving
+        datetime created_at
+        datetime updated_at
+        int created_by_id FK
+        int updated_by_id FK
+    }
+
+    student_lookup {
+        int id PK
+        string enrollment_number
+        string name
+        int program_id FK
+        string category
+        datetime created_at
+        datetime updated_at
+        int created_by_id FK
+        int updated_by_id FK
+    }
+
+    evidence {
+        int id PK
+        string filename
+        string file_path
+        string criterion_type
+        int record_id
+        datetime created_at
+        datetime updated_at
+        int created_by_id FK
+        int updated_by_id FK
+    }
+
+    c11_courses {
+        int id PK
+        string academic_year
+        int program_id FK
+        int course_id FK
+        text proof_links
+    }
+    c113_teacher_bodies {
+        int id PK
+        int year
+        int teacher_id FK
+        string body_name
+        text proof_document
+    }
+    c121_cbcs {
+        int id PK
+        int program_id FK
+        boolean status_of_implementation
+        int year_of_implementation
+        text proof_links
+    }
+    c122_addon {
+        int id PK
+        string name
+        int course_id FK
+        int program_id FK
+        int year_of_offering
+        int times_offered
+        string duration
+        int students_enrolled
+        int students_completed
+    }
+    c132_experiential {
+        int id PK
+        int program_id FK
+        int course_id FK
+        int student_id FK
+        int year_of_offering
+        text proof_links
+    }
+    c133_projects {
+        int id PK
+        int program_id FK
+        int student_id FK
+        text proof_links
+    }
+
+    c211_enrolment {
+        int id PK
+        string academic_year
+        int program_id FK
+        int sanctioned_seats
+        int admitted_students
+    }
+    c212_reservation {
+        int id PK
+        int year
+        int earmarked_sc
+        int earmarked_st
+        int earmarked_obc
+        int earmarked_gen
+        int earmarked_others
+        int admitted_sc
+        int admitted_st
+        int admitted_obc
+        int admitted_gen
+        int admitted_others
+        text supporting_document
+    }
+    c23_outgoing_students {
+        int id PK
+        int year_of_passing
+        int student_id FK
+    }
+    c233_mentor_ratio {
+        int id PK
+        string academic_year
+        string branch
+        int first_year_count
+        int second_year_count
+        int third_year_count
+        int fourth_year_count
+        int total_students
+        int total_mentors
+        string mentor_ratio
+    }
+    c241_teachers {
+        int id PK
+        int teacher_id FK
+        int year_of_appointment
+        string nature_of_appointment
+        float total_years_experience
+        boolean is_still_serving
+        int last_year_of_service
+    }
+    c242_teacher_phd {
+        int id PK
+        int teacher_id FK
+        string qualification
+        int year_of_obtaining
+        boolean is_still_serving
+        int last_year_of_service
+    }
+    c263_pass_percentage {
+        int id PK
+        int year
+        int program_id FK
+        int students_appeared
+        int students_passed
+    }
+
+    c3_fulltime_teachers {
+        int id PK
+        int teacher_id FK
+        string academic_year
+        int sanctioned_posts
+    }
+    c3_sanctioned_posts {
+        int id PK
+        int year
+        int sanctioned_posts_count
+        text supporting_document
+    }
+    c3_research_projects {
+        int id PK
+        string project_name
+        int pi_id FK
+        string co_investigator
+        string department
+        int year_of_award
+        float amount_sanctioned
+        string duration
+        string funding_agency
+        string funding_type
+    }
+    c313_events {
+        int id PK
+        int year
+        string event_name
+        int participant_count
+        date date_from
+        date date_to
+        text activity_report_link
+    }
+    c321_papers {
+        int id PK
+        string paper_title
+        text author_names
+        int teacher_id FK
+        string journal_name
+        int year_of_publication
+        string issn
+        text ugc_recognition_link
+    }
+    c322_books {
+        int id PK
+        int teacher_id FK
+        string book_title
+        string chapter_title
+        string paper_title
+        string conference_name
+        string proceedings_title
+        string level
+        int year_of_publication
+        string isbn_issn
+        string publisher
+    }
+    c332_extension_awards {
+        int id PK
+        string activity_name
+        string award_name
+        string awarding_body
+        int award_year
+    }
+    c333_outreach {
+        int id PK
+        string activity_name
+        string agency_name
+        string scheme_name
+        int year
+        int students_participated
+    }
+    c341_collaborations {
+        int id PK
+        string activity_title
+        string agency_name
+        string participant_name
+        int year
+        string duration
+        string nature_of_activity
+        text proof_links
+    }
+    c342_mous {
+        int id PK
+        string organisation_name
+        string institution_name
+        int signing_year
+        string duration
+        text activities_list
+        int participant_count
+    }
+
+    c413_ict_rooms {
+        int id PK
+        string room_number
+        string ict_facility_type
+        text geo_tagged_photo_link
+    }
+    c4_expenditure {
+        int id PK
+        int year
+        float budget_infra
+        float expenditure_infra
+        float total_expenditure_excl_salary
+        float expenditure_academic_maint
+        float expenditure_physical_maint
+    }
+    c42_library {
+        int id PK
+        string academic_year
+        string resource_type
+        text membership_details
+        float expenditure_ejournals
+        float expenditure_eresources
+        float total_library_expenditure
+        text proof_links
+    }
+    c511_scholarships {
+        int id PK
+        int year
+        string scheme_name
+        int gov_student_count
+        float gov_amount
+        int inst_student_count
+        float inst_amount
+        text proof_links
+    }
+    c513_skill_initiatives {
+        int id PK
+        string program_name
+        date implementation_date
+        int students_enrolled
+        text agencies_involved
+    }
+    c514_competitive_exams {
+        int id PK
+        int year
+        string exam_activity_name
+        int exam_students_count
+        string counseling_activity_name
+        int counseling_students_count
+        int students_placed
+        text proof_links
+    }
+    c521_placements {
+        int id PK
+        int year
+        int student_id FK
+        string program_graduated
+        string employer_name
+        string employer_contact
+        float pay_package
+    }
+    c522_higher_ed {
+        int id PK
+        int student_id FK
+        string program_graduated
+        string institution_joined
+        string program_admitted
+    }
+    c523_qualifying_exams {
+        int id PK
+        int year
+        int student_id FK
+        string registration_number
+        string exam_type
+    }
+    c531_sports_awards {
+        int id PK
+        int year
+        string award_name
+        string team_or_individual
+        string level
+        string activity_type
+        int student_id FK
+    }
+    c533_sports_events {
+        int id PK
+        date event_date
+        string event_name
+        int student_id FK
+    }
+
+    c623_egovernance {
+        int id PK
+        string area
+        string vendor_name
+        string vendor_contact
+        int year_of_implementation
+    }
+    c632_teacher_financial {
+        int id PK
+        int year
+        int teacher_id FK
+        string conference_name
+        string professional_body
+        float amount
+    }
+    c633_staff_training {
+        int id PK
+        date date_from
+        date date_to
+        string teaching_program_title
+        string non_teaching_program_title
+        int participant_count
+    }
+    c634_teacher_fdp {
+        int id PK
+        int teacher_id FK
+        string program_title
+        date duration_from
+        date duration_to
+    }
+    c642_non_gov_grants {
+        int id PK
+        int year
+        string agency_name
+        text purpose
+        float amount_received
+        text audited_statement_link
+    }
+    c653_quality_initiatives {
+        int id PK
+        int year
+        text conferences_conducted
+        text aaa_status
+        text nirf_status
+        string iso_certification
+        string iso_validity_period
+        text nba_certification
+        text collaborative_initiatives
+        text orientation_program
+        date orientation_date_from
+        date orientation_date_to
+    }
+
+    semester_lookup { 
+        int id PK
+        string value 
+    }
+    semester_course_lookup { 
+        int id PK
+        string semester
+        string course_code
+        string course_name 
+    }
+    course_type_lookup { 
+        int id PK
+        string value 
+    }
+    academic_year_lookup { 
+        int id PK
+        string value 
+    }
+    reserved_category_lookup { 
+        int id PK
+        string value 
+    }
+    library_resource_lookup { 
+        int id PK
+        string value 
+    }
+    qualifying_exam_lookup { 
+        int id PK
+        string value 
+    }
+    event_level_lookup { 
+        int id PK
+        string value 
+    }
+    award_category_lookup { 
+        int id PK
+        string value 
+    }
+    department_lookup { 
+        int id PK
+        string value 
+    }
+    designation_lookup { 
+        int id PK
+        string value 
+    }
+    highest_degree_lookup { 
+        int id PK
+        string value 
+    }
+    appointment_type_lookup { 
+        int id PK
+        string value 
+    }
+    funding_agency_lookup { 
+        int id PK
+        string value 
+    }
+    level_lookup { 
+        int id PK
+        string value 
+    }
+    team_individual_lookup { 
+        int id PK
+        string value 
+    }
+    student_filter_lookup { 
+        int id PK
+        string name
+        string course_code 
+    }
+    egovernance_area_lookup { 
+        int id PK
+        string value 
+    }
+    academic_years { 
+        int id PK
+        string year_name 
+    }
+    addon_subjects { 
+        int id PK
+        string name
+        string year_level 
+    }
+    proof_link_11 { 
+        int id PK
+        text link 
+    }
+    proof_link_121 { 
+        int id PK
+        text link 
+    }
+    proof_link_122_123 { 
+        int id PK
+        text link 
+    }
+
+    users ||--o{ program_lookup : "audit"
+    users ||--o{ course_lookup : "audit"
+    users ||--o{ teacher_lookup : "audit"
+    users ||--o{ student_lookup : "audit"
+    users ||--o{ evidence : "audit"
+
+    program_lookup ||--o{ course_lookup : "contains"
+    program_lookup ||--o{ student_lookup : "has_students"
+    program_lookup ||--o{ c11_courses : "ref"
+    course_lookup ||--o{ c11_courses : "ref"
+
+    teacher_lookup ||--o{ c113_teacher_bodies : "participates"
+    program_lookup ||--o{ c121_cbcs : "ref"
+    course_lookup ||--o{ c122_addon : "ref"
+    program_lookup ||--o{ c122_addon : "ref"
+    program_lookup ||--o{ c132_experiential : "ref"
+    course_lookup ||--o{ c132_experiential : "ref"
+    student_lookup ||--o{ c132_experiential : "ref"
+    program_lookup ||--o{ c133_projects : "ref"
+    student_lookup ||--o{ c133_projects : "ref"
+    program_lookup ||--o{ c211_enrolment : "ref"
+    student_lookup ||--o{ c23_outgoing_students : "ref"
+    teacher_lookup ||--o{ c241_teachers : "ref"
+    teacher_lookup ||--o{ c242_teacher_phd : "ref"
+    program_lookup ||--o{ c263_pass_percentage : "ref"
+
+    teacher_lookup ||--o{ c3_fulltime_teachers : "ref"
+    teacher_lookup ||--o{ c3_research_projects : "PI"
+    teacher_lookup ||--o{ c321_papers : "authors"
+    teacher_lookup ||--o{ c322_books : "authors"
+    student_lookup ||--o{ c521_placements : "placed"
+    student_lookup ||--o{ c522_higher_ed : "proceeds"
+    student_lookup ||--o{ c523_qualifying_exams : "passes"
+    student_lookup ||--o{ c531_sports_awards : "wins"
+    student_lookup ||--o{ c533_sports_events : "participates"
+    teacher_lookup ||--o{ c632_teacher_financial : "gets_aid"
+    teacher_lookup ||--o{ c634_teacher_fdp : "attends"
+        </pre>
+    </div>
+
+    <script>
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            maxTextSize: 1000000,
+            er: {
+                useMaxWidth: false,
+                layoutDirection: 'TB',
+                minEntityWidth: 160,
+                minEntityHeight: 100,
+                entityPadding: 20
+            }
+        });
+
+        function downloadImage() {
+            const svg = document.querySelector("#diagram-container svg");
+            if (!svg) {
+                alert("Please wait for the diagram to load completely.");
+                return;
+            }
+
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+            const img = new Image();
+
+            const scale = 2; 
+            const svgWidth = svg.viewBox.baseVal.width || svg.width.baseVal.value;
+            const svgHeight = svg.viewBox.baseVal.height || svg.height.baseVal.value;
+            
+            canvas.width = svgWidth * scale;
+            canvas.height = svgHeight * scale;
+
+            img.onload = function() {
+                ctx.fillStyle = "white";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                const pngFile = canvas.toDataURL("image/png");
+                
+                const downloadLink = document.createElement("a");
+                downloadLink.download = "naac_database_architecture_organized.png";
+                downloadLink.href = pngFile;
+                downloadLink.click();
+            };
+
+            img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+        }
+    </script>
+</body>
+</html>

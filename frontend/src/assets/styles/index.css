@@ -1,0 +1,247 @@
+/* =====================================================
+   METtrack Global Styles
+   ===================================================== */
+
+:root {
+  --sidebar-width: 260px;
+  --sidebar-bg: #8B0000;
+  --sidebar-hover: rgba(231, 7, 7, 0.826);
+  --brand-red: #8B0000;
+  --font-main: 'DM Sans', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: var(--font-main);
+  background: #f4f6f9;
+  overflow-x: hidden;
+}
+
+/* Wrapper used by every page that has a sidebar */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+/* ---- SIDEBAR ---- */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--sidebar-bg);
+  color: #fff;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+}
+
+.sidebar-brand {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #fff;
+  text-transform: uppercase;
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  font-family: 'DM Serif Display', serif;
+}
+
+.sidebar-brand span { color: var(--brand-red); }
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  padding: 0.65rem 1.5rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background: none;
+  border-top: none;
+  border-right: none;
+  border-bottom: none;
+  width: 100%;
+  text-align: left;
+}
+
+.sidebar-link:hover {
+  background: var(--sidebar-hover);
+  color: #fff;
+  border-left-color: var(--brand-red);
+}
+
+.sidebar-link.active {
+  background: rgba(220, 53, 69, 0.18);
+  color: #fff;
+  border-left-color: var(--brand-red);
+  font-weight: 600;
+}
+
+.sidebar-section-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  padding: 1.2rem 1.5rem 0.4rem;
+}
+
+.sidebar-submenu {
+  padding-left: 1rem;
+}
+
+.sidebar-submenu .sidebar-link {
+  font-size: 0.82rem;
+  padding: 0.45rem 1.5rem;
+}
+
+.sidebar-criteria-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: rgba(255,255,255,0.72);
+  padding: 0.65rem 1.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.sidebar-criteria-toggle:hover { background: var(--sidebar-hover); color: #fff; }
+
+.sidebar-submenu-list {
+  list-style: none;
+  padding: 0;
+  display: none;
+}
+
+.sidebar-submenu-list.open { display: block; }
+
+/* ---- MAIN CONTENT ---- */
+.main-content {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  min-height: 100vh;
+  width: calc(100% - var(--sidebar-width));
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* ---- PAGE HEADER ---- */
+.page-header {
+  background: #fff;
+  padding: 1.2rem 2rem;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.page-header h4 {
+  font-weight: 700;
+  color: var(--brand-red);
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* ---- CARDS ---- */
+.card { border-radius: 12px !important; }
+
+/* ---- FORM LABEL CUSTOM ---- */
+.form-label-custom {
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: #444;
+  margin-bottom: 4px;
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ---- TABLE ---- */
+.table thead.table-dark th {
+  background: #212529;
+  color: #fff;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+/* ---- PROOF SECTION ---- */
+.proof-section {
+  border: 2px solid #e9ecef;
+  background-color: #fdfdfe;
+  border-radius: 12px;
+}
+
+/* ---- FOOTER ---- */
+.college-footer {
+  margin-top: auto;
+  padding: 0;
+}
+
+.college-footer img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ---- HOME PAGE ---- */
+.home-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 2rem;
+}
+
+/* ---- LOADING SPINNER ---- */
+.spinner-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+/* ---- ANIMATIONS ---- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.35s ease both;
+}
+
+/* ---- SCROLLBAR ---- */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }

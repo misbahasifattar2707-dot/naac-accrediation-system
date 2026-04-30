@@ -1,0 +1,74 @@
+DATABASE SCHEMA DETAILS - NAAC PORTAL
+
+================================================================================
+1. AUTH & MASTER LOOKUP MODELS
+================================================================================
+
+Table: users
+Columns: [id, username, password, role, department, user_identifier, year, created_at, updated_at, created_by_id, updated_by_id]
+
+Table: program_lookup (Master Program List)
+Columns: [id, program_code, program_name, department, year_of_introduction, created_at, updated_at, created_by_id, updated_by_id]
+
+Table: course_lookup (Master Course List)
+Columns: [id, course_code, course_name, year_of_introduction, program_id (FK: program_lookup.id), created_at, updated_at, created_by_id, updated_by_id]
+
+Table: teacher_lookup (Master Teacher List)
+Columns: [id, name, pan, aadhar_or_id, email, gender, designation, department, joining_date, leaving_date, highest_degree, degree_year, is_still_serving, created_at, updated_at, created_by_id, updated_by_id]
+
+Table: student_lookup (Master Student List)
+Columns: [id, enrollment_number, name, program_id (FK: program_lookup.id), category, created_at, updated_at, created_by_id, updated_by_id]
+
+================================================================================
+2. CRITERIA TABLES
+================================================================================
+
+Table: c11_courses
+Columns: [id, academic_year, program_id (FK: program_lookup.id), course_id (FK: course_lookup.id), ...]
+
+Table: c113_teacher_bodies
+Columns: [id, year, teacher_id (FK: teacher_lookup.id), body_name, ...]
+
+Table: c121_cbcs
+Columns: [id, program_id (FK: program_lookup.id), status_of_implementation, ...]
+
+Table: c122_addon
+Columns: [id, name, course_id (FK: course_lookup.id), program_id (FK: program_lookup.id), ...]
+
+Table: c132_experiential
+Columns: [id, program_id (FK: program_lookup.id), course_id (FK: course_lookup.id), student_id (FK: student_lookup.id), ...]
+
+Table: c133_projects
+Columns: [id, program_id (FK: program_lookup.id), student_id (FK: student_lookup.id), ...]
+
+... (other criteria tables follow similar FK patterns)
+
+================================================================================
+3. AUXILIARY LOOKUP TABLES
+================================================================================
+
+- semester_lookup
+- semester_course_lookup
+- course_type_lookup
+- academic_year_lookup
+- reserved_category_lookup
+- library_resource_lookup
+- qualifying_exam_lookup
+- event_level_lookup
+- award_category_lookup
+- department_lookup
+- designation_lookup
+- highest_degree_lookup
+- appointment_type_lookup
+- funding_agency_lookup
+- level_lookup
+- team_individual_lookup
+- student_filter_lookup (Helper for project filtering)
+- egovernance_area_lookup
+
+================================================================================
+4. EVIDENCE MANAGEMENT
+================================================================================
+
+Table: evidence
+Columns: [id, filename, file_path, criterion_type, record_id, created_at, updated_at, created_by_id, updated_by_id]
