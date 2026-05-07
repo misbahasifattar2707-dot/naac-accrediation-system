@@ -8,15 +8,21 @@ from flask_cors import CORS
 from jinja2 import TemplateNotFound
 from flask import jsonify, render_template
 import mimetypes
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Fix Windows registry MIME type issue for static files
 mimetypes.add_type('application/javascript', '.js')
 mimetypes.add_type('text/css', '.css')
 def create_app():
     app = Flask(__name__, static_folder='static', static_url_path='')
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:root@localhost/naac_db'
-    app.config['SECRET_KEY']              = 'mca_project_secret'
-    app.config['UPLOAD_FOLDER']           = os.path.join('static', 'uploads')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+
+    app.config['SECRET_KEY']              = os.environ['SECRET_KEY']
+    app.config['UPLOAD_FOLDER']           = os.environ.get('UPLOAD_FOLDER', 'static/uploads')
+    
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
     # Initialise extensions

@@ -4,17 +4,17 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import Footer from "../../components/Footer";
-import { getRecords, addRecord, deleteRecord, deleteRecordsBulk, getAcademicYears, getProgrammes } from "../../api/apiService";
+//import { getRecords, addRecord, deleteRecord, deleteRecordsBulk, getAcademicYears, getProgrammes } from "../../api/apiService";
 import { getRecords, addRecord, deleteRecord, getAcademicYears, getProgrammes } from "../../api/apiService";
 
 const emptyForm = () => ({ year: "", student_name: "", program: "", employer: "", package: "" });
 
 export default function Criterion5_2_1() {
-  const [rows, setRows]           = useState([emptyForm()]);
-  const [records, setRecords]     = useState([]);
-  const [loading, setLoading]     = useState(true);
-  const [alert, setAlert]         = useState(null);
-  const [yearOptions, setYearOptions]   = useState([]);
+  const [rows, setRows] = useState([emptyForm()]);
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [alert, setAlert] = useState(null);
+  const [yearOptions, setYearOptions] = useState([]);
   const [programOptions, setProgramOptions] = useState([]);
 
   useEffect(() => {

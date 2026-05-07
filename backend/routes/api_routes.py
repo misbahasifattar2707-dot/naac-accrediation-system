@@ -2,8 +2,8 @@ import os
 import uuid
 from flask import Blueprint, jsonify, request, session, current_app, send_file
 from werkzeug.utils import secure_filename
-from ..models.models import *
-from ..extensions import db, bcrypt
+from models.models import *
+from extensions import db, bcrypt
 import pandas as pd
 from datetime import datetime, date
 from decimal import Decimal

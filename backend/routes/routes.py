@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify, send_file
-from ..extensions import db, bcrypt
-from ..models.models import *
+from extensions import db, bcrypt
+from models.models import *
 import os, io, requests as req_lib
 from pypdf import PdfWriter, PdfReader
 from openpyxl import Workbook, load_workbook
