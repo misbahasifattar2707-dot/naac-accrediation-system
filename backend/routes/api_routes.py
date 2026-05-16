@@ -297,10 +297,19 @@ CRITERIA_MODELS = {
     "1_3_2": C132Experiential, "1_3_3": C133Projects, 
     "2_1_1": C211Enrolment, "2_1_2": C212Reservation, "2_3": C23OutgoingStudents,
     "2_3_3": C233MentorRatio, "2_4_1": C241Teachers, "2_4_2": C242TeacherPhD, "2_6_3": C263PassPercentage,
+    # Criteria 3
+    "3_1": C3FullTimeTeachers, "3_2": C3SanctionedPosts,
+    "3_1_1_2": C3ResearchProjects, "3_1_3": C313Events, "3_2_1": C321Papers,
+    "3_2_2": C322Books, "3_3_2": C332ExtensionAwards, "3_3_3_4": C333Outreach,
+    "3_4_1": C341Collaborations, "3_4_2": C342MoUs,
+    # Criteria 4
     "4_1_3": C413ICTRooms, "4_1_4": C4Expenditure, "4_2_2": C42Library,
     "5_1_1": C511Scholarships, "5_1_3": C513SkillInitiatives, "5_1_4": C514CompetitiveExams,
     "5_2_1": C521Placements, "5_2_2": C522HigherEd, "5_2_3": C523QualifyingExams,
     "5_3_1": C531SportsAwards, "5_3_3": C533SportsEvents,
+    # Criteria 6
+    "6_2_3": C623EGovernance, "6_3_2": C632TeacherFinancial, "6_3_3": C633StaffTraining,
+    "6_3_4": C634TeacherFDP, "6_5_3": C653QualityInitiatives,
 }
 
 from decimal import Decimal
@@ -322,6 +331,21 @@ def to_dict(rec):
             d['cbcsStatus'] = "Yes" if val else "No"
         if col.name == 'year_of_implementation':
             d['cbcsYear'] = val
+            
+        DB_TO_UI = {
+            'room_number': 'room_details', 'ict_facility_type': 'ict_type', 'geo_tagged_photo_link': 'link',
+            'resource_type': 'resource', 'membership_details': 'details',
+            'expenditure_ejournals': 'exp_subscription', 'expenditure_eresources': 'exp_others',
+            'total_library_expenditure': 'total_exp', 'proof_links': 'link',
+            'budget_infra': 'budget_allocation', 'expenditure_infra': 'expenditure_augmentation',
+            'total_expenditure_excl_salary': 'total_exp_excluding_salary',
+            'expenditure_academic_maint': 'maintenance_academic', 'expenditure_physical_maint': 'maintenance_physical',
+            'co_investigator': 'pi_name', 'activity_report_link': 'date_from_to',
+            'supporting_document': 'upload_supporting_document'
+        }
+        if col.name in DB_TO_UI:
+            d[DB_TO_UI[col.name]] = val
+
 
     # Lookup related names for the UI tables
     if hasattr(rec, 'course_id') and rec.course_id:
@@ -367,6 +391,32 @@ def get_records(criterion):
             result.append(d)
         return jsonify(result)
     
+    # ---- Enrich 3_2_2: add teacher names for display ----
+    if criterion == '3_2_2':
+        records = C322Books.query.all()
+        result = []
+        for r in records:
+            d = to_dict(r)
+            if r.teacher_id:
+                t = Teacher.query.get(r.teacher_id)
+                d['author_names'] = t.name if t else ''
+                d['teacher_ids'] = [str(r.teacher_id)]
+            else:
+                d['author_names'] = ''
+                d['teacher_ids'] = []
+            result.append(d)
+        return jsonify(result)
+
+    # ---- Enrich 3_1_1_2: remap co_investigator → pi_name for UI ----
+    if criterion == '3_1_1_2':
+        records = C3ResearchProjects.query.all()
+        result = []
+        for r in records:
+            d = to_dict(r)
+            d['pi_name'] = r.co_investigator or ''  # alias for UI
+            result.append(d)
+        return jsonify(result)
+
     return jsonify([to_dict(r) for r in model.query.all()])
 
 # ---- Dedicated POST for Criterion 1.1 ----
@@ -444,6 +494,85 @@ def add_record_1_1():
         import traceback; traceback.print_exc()
         return jsonify({"success": False, "error": str(e)}), 400
 
+# ---- Dedicated POST for Criterion 3.1.1 & 3.1.2 (Research Projects) ----
+@api_bp.route('/records/3_1_1_2', methods=['POST'])
+def add_record_3_1_1_2():
+    """
+    Maps: project_name, pi_name (→ co_investigator), department,
+          year_of_award, amount_sanctioned, duration, funding_agency, funding_type
+    """
+    data = request.json or {}
+    try:
+        rec = C3ResearchProjects(
+            project_name      = data.get('project_name', ''),
+            co_investigator   = data.get('pi_name', data.get('co_investigator', '')),
+            department        = data.get('department', ''),
+            year_of_award     = int(data['year_of_award']) if data.get('year_of_award') and str(data['year_of_award']).isdigit() else None,
+            amount_sanctioned = data.get('amount_sanctioned') or None,
+            duration          = data.get('duration', ''),
+            funding_agency    = data.get('funding_agency', ''),
+            funding_type      = data.get('funding_type', ''),
+            created_by_id     = session.get('user_id'),
+            updated_by_id     = session.get('user_id'),
+        )
+        db.session.add(rec)
+        db.session.commit()
+        return jsonify({"success": True, "data": to_dict(rec)})
+    except Exception as e:
+        db.session.rollback()
+        import traceback; traceback.print_exc()
+        return jsonify({"success": False, "error": str(e)}), 400
+
+# ---- Dedicated POST for Criterion 3.2.2 (Books/Chapters per Teacher) ----
+@api_bp.route('/records/3_2_2', methods=['POST'])
+def add_record_3_2_2():
+    """
+    Frontend sends teacher_ids (array of IDs) + other_teacher_name.
+    We store the primary teacher_id (first in list) and put full names in author_names.
+    """
+    data = request.json or {}
+    teacher_ids  = data.get('teacher_ids', [])
+    other_name   = data.get('other_teacher_name', '')
+
+    # Resolve teacher names for display / audit
+    names = []
+    primary_tid = None
+    for tid in teacher_ids:
+        t = Teacher.query.get(int(tid))
+        if t:
+            names.append(t.name)
+            if primary_tid is None:
+                primary_tid = t.id
+    if other_name:
+        names.append(other_name)
+
+    try:
+        rec = C322Books(
+            teacher_id           = primary_tid,
+            book_title           = data.get('book_title', ''),
+            paper_title          = data.get('paper_title', ''),
+            chapter_title        = data.get('book_title', ''),   # alias
+            conference_name      = data.get('conference_name', ''),
+            proceedings_title    = data.get('proceedings_title', ''),
+            level                = data.get('level', ''),
+            year_of_publication  = data.get('year_of_publication') or None,
+            isbn_issn            = data.get('isbn_issn', ''),
+            affiliating_institute= data.get('affiliating_institute', ''),
+            publisher            = data.get('publisher', ''),
+            created_by_id        = session.get('user_id'),
+            updated_by_id        = session.get('user_id'),
+        )
+        db.session.add(rec)
+        db.session.commit()
+        d = to_dict(rec)
+        d['author_names'] = ", ".join(names)  # add for UI display
+        d['teacher_ids']  = teacher_ids
+        return jsonify({"success": True, "data": d})
+    except Exception as e:
+        db.session.rollback()
+        import traceback; traceback.print_exc()
+        return jsonify({"success": False, "error": str(e)}), 400
+
 @api_bp.route('/records/<criterion>', methods=['POST'])
 def add_record(criterion):
     model = CRITERIA_MODELS.get(criterion)
@@ -478,6 +607,18 @@ def add_record(criterion):
         if t and hasattr(model, 'teacher_id'): db_kwargs['teacher_id'] = t.id
         
     # 2. Map payload keys to model columns
+    # UI field name -> DB column name aliases
+    UI_TO_DB = {
+        'room_details': 'room_number', 'ict_type': 'ict_facility_type', 'link': 'geo_tagged_photo_link',
+        'resource': 'resource_type', 'details': 'membership_details',
+        'exp_subscription': 'expenditure_ejournals', 'exp_others': 'expenditure_eresources',
+        'total_exp': 'total_library_expenditure', 'link': 'proof_links',
+        'budget_allocation': 'budget_infra', 'expenditure_augmentation': 'expenditure_infra',
+        'total_exp_excluding_salary': 'total_expenditure_excl_salary',
+        'maintenance_academic': 'expenditure_academic_maint', 'maintenance_physical': 'expenditure_physical_maint',
+        'pi_name': 'co_investigator', 'date_from_to': 'activity_report_link',
+        'upload_supporting_document': 'supporting_document'
+    }
     for col in model.__table__.columns:
         col_name = col.name
         if col_name == 'id': continue
@@ -489,6 +630,15 @@ def add_record(criterion):
             else:
                  db_kwargs[col_name] = data[col_name]
         else:
+            # Check UI alias
+            found_ui = False
+            for ui_key, db_key in UI_TO_DB.items():
+                if db_key == col_name and ui_key in data:
+                    db_kwargs[col_name] = data[ui_key]
+                    found_ui = True
+                    break
+            if found_ui:
+                continue
             # Common UI -> DB Alias mapping
             if col_name == 'academic_year' and 'year' in data:
                 db_kwargs[col_name] = data['year']
@@ -581,3 +731,248 @@ def bulk_delete(criterion):
         model.query.filter(model.id.in_(ids)).delete(synchronize_session=False)
         db.session.commit()
     return jsonify({"success": True})
+
+
+# ============================================================
+# EXCEL EXPORT ENDPOINTS — /api/export-excel/<criterion>
+# ============================================================
+
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.utils import get_column_letter
+import io
+
+def _make_border():
+    t = Side(style='thin')
+    return Border(left=t, right=t, top=t, bottom=t)
+
+def _hdr(ws, row, col, val, bg='1F4E79'):
+    c = ws.cell(row=row, column=col, value=val)
+    c.font = Font(bold=True, color='FFFFFF', name='Arial', size=10)
+    c.fill = PatternFill('solid', start_color=bg)
+    c.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
+    c.border = _make_border()
+    return c
+
+def _dat(ws, row, col, val, center=False):
+    c = ws.cell(row=row, column=col, value=val)
+    c.font = Font(name='Arial', size=10)
+    c.alignment = Alignment(horizontal='center' if center else 'left', vertical='center', wrap_text=True)
+    c.border = _make_border()
+    return c
+
+def _title(ws, title, cols):
+    ws.merge_cells(f'A1:{get_column_letter(cols)}1')
+    c = ws['A1']
+    c.value = title
+    c.font = Font(bold=True, size=12, color='FFFFFF', name='Arial')
+    c.fill = PatternFill('solid', start_color='C00000')
+    c.alignment = Alignment(horizontal='center', vertical='center', wrap_text=True)
+    c.border = _make_border()
+    ws.row_dimensions[1].height = 28
+
+def _send_wb(wb, filename):
+    out = io.BytesIO()
+    wb.save(out)
+    out.seek(0)
+    return send_file(out, download_name=filename, as_attachment=True,
+                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+
+@api_bp.route('/export-excel/<criterion>')
+def export_excel(criterion):
+    """Generic + specific Excel export for all criteria."""
+    # ---- Criteria 3 ----
+    if criterion == '3_1':
+        records = C3FullTimeTeachers.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C3.1'
+        _title(ws, '3.1 Number of Full-Time Teachers During the Year', 4)
+        hdrs = ['#','Teacher Name','Academic Year','Sanctioned Posts']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            t = Teacher.query.get(rec.teacher_id); tname = t.name if t else ''
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,tname); _dat(ws,r,3,rec.academic_year,True); _dat(ws,r,4,rec.sanctioned_posts,True)
+        for i,w in enumerate([4,35,15,18],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_3_1_FullTimeTeachers.xlsx')
+
+    if criterion == '3_2':
+        records = C3SanctionedPosts.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C3.2'
+        _title(ws, '3.2 Number of Sanctioned Posts During the Year', 4)
+        hdrs = ['#','Year','Number of Sanctioned Posts','Proof Link']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,rec.year,True)
+            _dat(ws,r,3,rec.sanctioned_posts_count,True); _dat(ws,r,4,rec.supporting_document)
+        for i,w in enumerate([4,15,25,45],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_3_2_SanctionedPosts.xlsx')
+
+    if criterion == '3_1_1_2':
+        records = C3ResearchProjects.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C3.1.1-3.1.2'
+        _title(ws, '3.1.1 & 3.1.2 Research Grants & Departments with Research Projects', 8)
+        hdrs = ['#','Project / Endowments','Principal Investigator','Department','Year of Award','Amount Sanctioned (₹L)','Duration','Funding Agency','Type']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,rec.project_name); _dat(ws,r,3,rec.co_investigator)
+            _dat(ws,r,4,rec.department); _dat(ws,r,5,rec.year_of_award,True)
+            _dat(ws,r,6,float(rec.amount_sanctioned) if rec.amount_sanctioned else '',True)
+            _dat(ws,r,7,rec.duration); _dat(ws,r,8,rec.funding_agency); _dat(ws,r,9,rec.funding_type)
+        for i,w in enumerate([4,40,25,20,12,18,15,25,15],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_3_1_Research_Grants.xlsx')
+
+    if criterion == '3_1_3':
+        records = C313Events.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C3.1.3'
+        _title(ws, '3.1.3 Seminars / Conferences / Workshops Conducted', 5)
+        hdrs = ['#','Year','Name of Workshop/Seminar','Participants','Date From','Date To','Activity Report Link']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,rec.year,True); _dat(ws,r,3,rec.event_name)
+            _dat(ws,r,4,rec.participant_count,True)
+            _dat(ws,r,5,rec.date_from.isoformat() if rec.date_from else '',True)
+            _dat(ws,r,6,rec.date_to.isoformat() if rec.date_to else '',True)
+            _dat(ws,r,7,rec.activity_report_link)
+        for i,w in enumerate([4,12,40,14,14,14,45],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_3_1_3_Events.xlsx')
+
+    if criterion == '3_2_1':
+        records = C321Papers.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C3.2.1'
+        _title(ws, '3.2.1 Papers Published per Teacher in UGC Notified Journals', 7)
+        hdrs = ['#','Title of Paper','Author/s','Department','Journal Name','Year','ISSN','UGC Proof Link']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,rec.paper_title); _dat(ws,r,3,rec.author_names)
+            _dat(ws,r,4,rec.department); _dat(ws,r,5,rec.journal_name)
+            _dat(ws,r,6,rec.year_of_publication,True); _dat(ws,r,7,rec.issn,True)
+            _dat(ws,r,8,rec.ugc_recognition_link)
+        for i,w in enumerate([4,40,25,20,30,12,16,45],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_3_2_1_Papers.xlsx')
+
+    if criterion == '3_2_2':
+        records = C322Books.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C3.2.2'
+        _title(ws, '3.2.2 Books, Chapters & Conference Proceedings per Teacher', 10)
+        hdrs = ['#','Teacher','Book/Chapter Title','Paper Title','Proceedings Title','Conference','Level','Year','ISBN/ISSN','Affiliating Institute','Publisher']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            t = Teacher.query.get(rec.teacher_id); tname = t.name if t else ''
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,tname); _dat(ws,r,3,rec.book_title)
+            _dat(ws,r,4,rec.paper_title); _dat(ws,r,5,rec.proceedings_title)
+            _dat(ws,r,6,rec.conference_name); _dat(ws,r,7,rec.level,True)
+            _dat(ws,r,8,rec.year_of_publication,True); _dat(ws,r,9,rec.isbn_issn,True)
+            _dat(ws,r,10,rec.affiliating_institute); _dat(ws,r,11,rec.publisher)
+        for i,w in enumerate([4,25,35,30,30,25,14,12,16,30,25],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_3_2_2_Books.xlsx')
+
+    if criterion == '3_3_2':
+        records = C332ExtensionAwards.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C3.3.2'
+        _title(ws, '3.3.2 Extension & Outreach Awards', 4)
+        hdrs = ['#','Activity Name','Award Name','Awarding Body','Year']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,rec.activity_name); _dat(ws,r,3,rec.award_name)
+            _dat(ws,r,4,rec.awarding_body); _dat(ws,r,5,rec.award_year,True)
+        for i,w in enumerate([4,35,30,30,12],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_3_3_2_Awards.xlsx')
+
+    if criterion == '3_3_3_4':
+        records = C333Outreach.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C3.3.3-4'
+        _title(ws, '3.3.3 & 3.3.4 Outreach & Extension Activities', 5)
+        hdrs = ['#','Activity Name','Agency Name','Scheme Name','Year','Students Participated']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,rec.activity_name); _dat(ws,r,3,rec.agency_name)
+            _dat(ws,r,4,rec.scheme_name); _dat(ws,r,5,rec.year,True); _dat(ws,r,6,rec.students_participated,True)
+        for i,w in enumerate([4,35,30,25,12,18],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_3_3_3_4_Outreach.xlsx')
+
+    if criterion == '3_4_1':
+        records = C341Collaborations.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C3.4.1'
+        _title(ws, '3.4.1 Linkages / Functional Collaborations', 6)
+        hdrs = ['#','Activity Title','Agency Name','Participant','Year','Duration','Nature of Activity','Proof Link']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,rec.activity_title); _dat(ws,r,3,rec.agency_name)
+            _dat(ws,r,4,rec.participant_name); _dat(ws,r,5,rec.year,True)
+            _dat(ws,r,6,rec.duration); _dat(ws,r,7,rec.nature_of_activity); _dat(ws,r,8,rec.proof_links)
+        for i,w in enumerate([4,30,25,25,12,15,25,40],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_3_4_1_Collaborations.xlsx')
+
+    if criterion == '3_4_2':
+        records = C342MoUs.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C3.4.2'
+        _title(ws, '3.4.2 MoUs / Functional Linkages', 6)
+        hdrs = ['#','Organisation Name','Institution Name','Signing Year','Duration','Activities','Participants']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,rec.organisation_name); _dat(ws,r,3,rec.institution_name)
+            _dat(ws,r,4,rec.signing_year,True); _dat(ws,r,5,rec.duration)
+            _dat(ws,r,6,rec.activities_list); _dat(ws,r,7,rec.participant_count,True)
+        for i,w in enumerate([4,30,30,14,15,35,14],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_3_4_2_MoUs.xlsx')
+
+    # ---- Criteria 4 ----
+    if criterion == '4_1_3':
+        records = C413ICTRooms.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C4.1.3'
+        _title(ws, '4.1.3 ICT-Enabled Classrooms / Smart Rooms', 3)
+        hdrs = ['#','Room / Classroom / Seminar Hall','Type of ICT Facility','Link to Geo-Tagged Photos']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,rec.room_number); _dat(ws,r,3,rec.ict_facility_type)
+            _dat(ws,r,4,rec.geo_tagged_photo_link)
+        for i,w in enumerate([4,35,30,45],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_4_1_3_ICT.xlsx')
+
+    if criterion == '4_1_4':
+        records = C4Expenditure.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C4.1.4'
+        _title(ws, '4.1.4 & 4.4.1 Infrastructure Expenditure (INR in Lakhs)', 6)
+        hdrs = ['#','Year','Budget Allocated (₹L)','Expenditure Augmentation (₹L)','Total Exp. Excl. Salary (₹L)','Maint. Academic (₹L)','Maint. Physical (₹L)']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,rec.year,True)
+            _dat(ws,r,3,float(rec.budget_infra) if rec.budget_infra else '',True)
+            _dat(ws,r,4,float(rec.expenditure_infra) if rec.expenditure_infra else '',True)
+            _dat(ws,r,5,float(rec.total_expenditure_excl_salary) if rec.total_expenditure_excl_salary else '',True)
+            _dat(ws,r,6,float(rec.expenditure_academic_maint) if rec.expenditure_academic_maint else '',True)
+            _dat(ws,r,7,float(rec.expenditure_physical_maint) if rec.expenditure_physical_maint else '',True)
+        for i,w in enumerate([4,14,20,22,22,20,20],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_4_1_4_Expenditure.xlsx')
+
+    if criterion == '4_2_2':
+        records = C42Library.query.all()
+        wb = Workbook(); ws = wb.active; ws.title = 'C4.2.2'
+        _title(ws, '4.2.2 & 4.2.3 Library Resources & Expenditure', 6)
+        hdrs = ['#','Academic Year','Resource Type','Membership Details','Exp. e-Journals (₹L)','Exp. Others (₹L)','Total Library Exp. (₹L)','Proof Link']
+        for i,h in enumerate(hdrs,1): _hdr(ws,2,i,h)
+        for r,rec in enumerate(records,3):
+            _dat(ws,r,1,r-2,True); _dat(ws,r,2,rec.academic_year,True)
+            _dat(ws,r,3,rec.resource_type); _dat(ws,r,4,rec.membership_details)
+            _dat(ws,r,5,float(rec.expenditure_ejournals) if rec.expenditure_ejournals else '',True)
+            _dat(ws,r,6,float(rec.expenditure_eresources) if rec.expenditure_eresources else '',True)
+            _dat(ws,r,7,float(rec.total_library_expenditure) if rec.total_library_expenditure else '',True)
+            _dat(ws,r,8,rec.proof_links)
+        for i,w in enumerate([4,16,18,30,18,14,18,40],1): ws.column_dimensions[get_column_letter(i)].width=w
+        return _send_wb(wb,'Criteria_4_2_2_Library.xlsx')
+
+    # ---- Generic fallback ----
+    model = CRITERIA_MODELS.get(criterion)
+    if not model:
+        return jsonify({"error": "Unknown criterion"}), 404
+    records = model.query.all()
+    wb = Workbook(); ws = wb.active; ws.title = criterion
+    cols = [c.name for c in model.__table__.columns]
+    for i,h in enumerate(cols,1): _hdr(ws,1,i,h)
+    for r,rec in enumerate(records,2):
+        for i,col in enumerate(cols,1):
+            val = getattr(rec,col)
+            if isinstance(val, date): val = val.isoformat()
+            if isinstance(val, Decimal): val = float(val)
+            _dat(ws,r,i,val)
+    return _send_wb(wb, f'Criteria_{criterion}.xlsx')
